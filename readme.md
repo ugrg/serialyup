@@ -220,6 +220,7 @@ extends Schema
 
 ##round 取整转换
 取整一共分为round(四舍五入)，floor（向下取整），ceil（向上取整）
+
 参数|类型|默认值|说明
 ----|----|----|----
 `fn`|String|"round"|取整方式
