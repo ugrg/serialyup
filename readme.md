@@ -107,6 +107,7 @@ new YupCompatible(schema)
 
 ## required 非空判定
 会按nullAllow与undefinedAllow的设置来综合判定是否这空
+
 参数|类型|默认值|说明
 ----|----|----|----
 `message`|String|"不可为空！"|匹配失败提示内容
