@@ -50,7 +50,7 @@ new YupCompatible(schema)
 ## nullAllow 允许null
 ## undefinedAllow 允许undefined
 
-## transform 添加类弄转换器
+## transform 添加类型转换器
 
 参数|类型|默认值|说明
 ----|----|----|----
