@@ -50,7 +50,7 @@ new YupCompatible(schema)
 ## nullAllow 允许null
 ## undefinedAllow 允许undefined
 
-## transform 添加类弄转换器
+## transform 添加类型转换器
 
 参数|类型|默认值|说明
 ----|----|----|----
@@ -107,6 +107,7 @@ new YupCompatible(schema)
 
 ## required 非空判定
 会按nullAllow与undefinedAllow的设置来综合判定是否这空
+
 参数|类型|默认值|说明
 ----|----|----|----
 `message`|String|"不可为空！"|匹配失败提示内容
@@ -220,6 +221,7 @@ extends Schema
 
 ##round 取整转换
 取整一共分为round(四舍五入)，floor（向下取整），ceil（向上取整）
+
 参数|类型|默认值|说明
 ----|----|----|----
 `fn`|String|"round"|取整方式
