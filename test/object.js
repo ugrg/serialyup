@@ -49,6 +49,8 @@ describe("object", () => {
       })
     });
     return Promise.all([
+      schema.validate({ v1: "v1", v2: "v2", v3: "v3" })
+        .then(result => expect(result).toEqual({ v1: "v1", v2: "v2", v3: "v3" })),
       schema.validate({ v1: "v1", v2: "v2" })
         .then(result => expect(result).toEqual({ v1: "v1", v2: "v2" })),
       schema.validate({ v1: "v1", v2: "s1" })

@@ -3,11 +3,11 @@
  * Create Time: 2019/10/25 10:46
  */
 
+import Schema, { SchemaOptions } from "./Schema";
 import { isNumber, isString } from "./utils";
-import Schema from "./Schema";
 
 class NumberSchema extends Schema {
-  constructor (options) {
+  constructor (options: SchemaOptions) {
     super(isNumber, options);
     this.transform((value) => isString(value) ? parseFloat(value) : value, true);
   }
@@ -18,7 +18,7 @@ class NumberSchema extends Schema {
    * @param {String|Function}[message]
    * @returns {Schema}
    */
-  min (limit, message = `小于${limit}`) {
+  min (limit: number, message = `小于${limit}`) {
     return this.test("min", message, (value) => value >= limit);
   }
 
@@ -28,7 +28,7 @@ class NumberSchema extends Schema {
    * @param {String|Function}[message]
    * @returns {Schema}
    */
-  max (limit, message = `大于${limit}`) {
+  max (limit: number, message = `大于${limit}`) {
     return this.test("max", message, (value) => value <= limit);
   }
 
@@ -63,7 +63,7 @@ class NumberSchema extends Schema {
    * 取整
    * @param {"floor"|"ceil"|"round"}[fn]
    */
-  round (fn = "round") {
+  round (fn = "round" as "floor" | "ceil" | "round") {
     if (!new Set(["floor", "ceil", "round"]).has(fn)) {
       throw new Error(`不支持${fn}取整算法！`);
     }
@@ -76,8 +76,8 @@ class NumberSchema extends Schema {
    * @param {Array<*>}[options]
    * @returns {*}
    */
-  required (message, options = []) {
-    return super.required(message, [].concat(options, NaN));
+  required (message: string, options = []) {
+    return super.required(message, ([] as any[]).concat(options, NaN));
   }
 }
 

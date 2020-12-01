@@ -4,7 +4,9 @@
  */
 
 class ValidationError extends Error {
-  constructor (message, path, name) {
+  public path?: string;
+
+  constructor (message: string, path?: string, name = "") {
     super();
     this.message = message;
     this.path = path;

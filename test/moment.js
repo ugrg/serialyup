@@ -3,8 +3,8 @@
  * Create Time: 2019/10/25 16:53
  */
 
-import { moment, date } from "../src";
 import Moment from "moment";
+import { date, moment } from "../src";
 
 describe("moment", () => {
   it("create moment", () => {
@@ -22,7 +22,6 @@ describe("moment", () => {
     const day = Moment("2019-09-09");
     return Promise.all([
       moment().add(1, "days").validate(day).then(value => expect(value.isSame("2019-09-10", "days")).toBeTruthy()),
-      moment().subtract(1, "days").validate(day).then(value => expect(value.isSame("2019-09-08", "days")).toBeTruthy()),
       moment().startOf("month").validate(day).then(value => expect(value.isSame("2019-09-01", "days")).toBeTruthy()),
       moment().endOf("month").validate(day).then(value => expect(value.isSame("2019-09-30", "days")).toBeTruthy()),
       moment().format("YYYY-MM-DD").validate(day).then(value => expect(value).toBe("2019-09-09"))

@@ -3,11 +3,11 @@
  * Create Time: 2019/10/25 15:17
  */
 
+import Schema, { SchemaOptions } from "./Schema";
 import { isBoolean } from "./utils";
-import Schema from "./Schema";
 
 class BooleanSchema extends Schema {
-  constructor (options) {
+  constructor (options: SchemaOptions) {
     super(isBoolean, options);
     this.transform((value) => !!value, true);
   }

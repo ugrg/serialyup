@@ -3,12 +3,12 @@
  * Create Time: 2019/10/25 15:29
  */
 
-import { isDate, isString } from "./utils";
-import Schema from "./Schema";
 import moment from "moment";
+import Schema, { SchemaOptions } from "./Schema";
+import { isDate, isString } from "./utils";
 
 class DateSchema extends Schema {
-  constructor (options) {
+  constructor (options: SchemaOptions) {
     super(isDate, options);
     this.transform((value) => {
       if (!isString(value)) return value;
@@ -17,7 +17,7 @@ class DateSchema extends Schema {
     }, true);
   }
 
-  format (format) {
+  format (format: string) {
     return this.transform((value) => {
       if (!format) return value.toISOString();
       return moment(value).format(format);
@@ -29,7 +29,7 @@ class DateSchema extends Schema {
    * @param {Date}limit
    * @param {String|Function}[message]
    */
-  max (limit, message = `不可在${limit.toISOString()}之后！`) {
+  max (limit: Date, message = `不可在${limit.toISOString()}之后！`) {
     return this.test("max", message, (value) => value.valueOf() <= limit.valueOf());
   }
 
@@ -38,7 +38,7 @@ class DateSchema extends Schema {
    * @param limit
    * @param message
    */
-  min (limit, message = `不可在${limit.toISOString()}之前！`) {
+  min (limit: Date, message = `不可在${limit.toISOString()}之前！`) {
     return this.test("max", message, (value) => value.valueOf() >= limit.valueOf());
   }
 }
