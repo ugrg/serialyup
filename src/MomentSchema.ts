@@ -3,12 +3,12 @@
  * Create Time: 2019/10/25 16:36
  */
 
-import moment, { DurationInputArg1, DurationInputArg2, Moment, MomentInput, unitOfTime } from "moment";
-import Schema, { SchemaOptions } from "./Schema";
-import { isDate, isString } from "./utils";
+import moment, { DurationInputArg1, DurationInputArg2, Moment, MomentInput, unitOfTime } from 'moment';
+import Schema, { SchemaOptions } from './Schema';
+import { isDate, isString } from './utils';
 
 class MomentSchema extends Schema {
-  constructor (options: SchemaOptions) {
+  constructor (options?: SchemaOptions) {
     super(moment.isMoment, options);
     this.transform((value) => {
       if (isDate(value)) return moment(value);
@@ -35,23 +35,23 @@ class MomentSchema extends Schema {
   }
 
   isBefore (date: MomentInput, type: unitOfTime.StartOf, message: string) {
-    return this.test("isBefore", message, (value) => value.isBefore(date, type));
+    return this.test('isBefore', message, (value) => value.isBefore(date, type));
   }
 
   isSame (date: MomentInput, type: unitOfTime.StartOf, message: string) {
-    return this.test("isSame", message, (value) => value.isSame(date, type));
+    return this.test('isSame', message, (value) => value.isSame(date, type));
   }
 
   isAfter (date: MomentInput, type: unitOfTime.StartOf, message: string) {
-    return this.test("isAfter", message, (value) => value.isAfter(date, type));
+    return this.test('isAfter', message, (value) => value.isAfter(date, type));
   }
 
   isLeapYear (message: string) {
-    return this.test("isLeapYear", message, (value) => value.isLeapYear());
+    return this.test('isLeapYear', message, (value) => value.isLeapYear());
   }
 
   isValid (message: string) {
-    return this.test("isValid", message, (value) => value.isValid());
+    return this.test('isValid', message, (value) => value.isValid());
   }
 }
 

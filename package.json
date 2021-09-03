@@ -1,6 +1,6 @@
 {
   "name": "serialyup",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "这是一个用来对对象进行验证的模块，其基础思路来自Formik推荐的Yup。",
   "author": "ugrg",
   "homepage": "https://github.com/ugrg/serialyup",
@@ -12,12 +12,10 @@
     "url": "https://github.com/ugrg/serialyup/issues"
   },
   "license": "ISC",
-  "main": "./dist/index.js",
-  "module": "./src/index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel ./src --out-dir ./dist -x \".ts,.js\"",
-    "build": "cross-env BABEL_ENV=edition-browsers && tsc --noEmit false",
+    "build": "tsc --noEmit false",
     "test": "jest",
     "lint": "eslint src --ext .ts",
     "push": "yarn test && yarn build && yarn publish"
@@ -25,33 +23,30 @@
   "files": [
     "src",
     "test",
-    "dist",
-    "config"
+    "lib"
   ],
+  "peerDependencies": {
+    "moment": "^2.24.0"
+  },
   "dependencies": {
-    "@babel/runtime": "^7.6.3",
-    "moment": "^2.24.0",
+    "tslib": "^2.3.1",
     "typechecker": "4.7.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.3",
-    "@babel/core": "^7.6.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-typescript": "^7.12.7",
+    "moment": "^2.24.0",
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.6.1",
     "cross-env": "^6.0.3",
     "eslint": "^7.0.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "jest": "^24.9.0",
-    "jest-environment-jsdom-fourteen": "^0.1.0",
-    "jest-watch-typeahead": "^0.4.0",
-    "typescript": "^4.0.0",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.6.1"
+    "jest": "^27.1.0",
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.0.0"
   }
 }

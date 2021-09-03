@@ -3,9 +3,9 @@
  * Create Time: 2019/10/24 16:16
  */
 
-import Schema, { Options, SchemaOptions } from "./Schema";
-import { isObject, promiseObjectAllSettled } from "./utils";
-import ValidationError from "./ValidationError";
+import Schema, { Options, SchemaOptions } from './Schema';
+import { isObject, promiseObjectAllSettled } from './utils';
+import ValidationError from './ValidationError';
 
 export interface ObjectSchemaOptions extends SchemaOptions {
   exact?: boolean,
@@ -19,12 +19,12 @@ class ObjectSchema extends Schema {
   private _exact: boolean;
   private _exactMessage: string;
 
-  constructor (schemas: Schemas, options = {} as ObjectSchemaOptions) {
+  constructor (schemas: Schemas = {}, options: ObjectSchemaOptions = {}) {
     const { exact = false, exactMessage, ...others } = options as ObjectSchemaOptions;
     super(isObject, others);
     this.schemas = schemas;
     this._exact = exact;
-    this._exactMessage = exactMessage || "含有未知属性！";
+    this._exactMessage = exactMessage || '含有未知属性！';
   }
 
   /**
@@ -45,7 +45,7 @@ class ObjectSchema extends Schema {
    * @param {String|Function}[message]
    * @returns {ObjectSchema}
    */
-  exact (schemas: Schemas, message = "含有未被允许的属性") {
+  exact (schemas: Schemas, message = '含有未被允许的属性') {
     if (schemas instanceof ObjectSchema) schemas = schemas.schemas;
     this.schemas = schemas;
     this._exact = true;
@@ -59,15 +59,15 @@ class ObjectSchema extends Schema {
    * @param {object}[options]
    * @returns {Promise<>}
    */
-  validate (values: any, options = {} as Options) {
-    const { path = "", values: orgValues = values } = options;
+  validate<V> (values: V, options = {} as Options): Promise<V> {
+    const { path = '', values: orgValues = values } = options;
     return super.validate(values, options).then((values) => {
       // 生成非验证字段集合
       const exactValues = Object.entries(values).filter(([key]) => !(key in this.schemas));
-      if (this._exact && exactValues.length > 0) { throw new ValidationError(this._exactMessage, path, "exact"); }
+      if (this._exact && exactValues.length > 0) { throw new ValidationError(this._exactMessage, path, 'exact'); }
       return promiseObjectAllSettled(Object.entries(this.schemas).map(([key, schema]) => {
         const _options = Object.assign({}, options, {
-          path: [path, key].filter(Boolean).join("."),
+          path: [path, key].filter(Boolean).join('.'),
           parent: values,
           values: orgValues
         });

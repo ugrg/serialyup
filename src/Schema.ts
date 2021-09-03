@@ -2,11 +2,11 @@
  * Author: ugrg
  * Create Time: 2019/10/24 10:09
  */
-import { anyType, isFunction, isNull, isObject, isString, isUndefined } from "./utils";
+import { anyType, isFunction, isNull, isObject, isString, isUndefined } from './utils';
 
-import ValidationError from "./ValidationError";
+import ValidationError from './ValidationError';
 
-const _TEST_TASKS_ = Symbol("tests");
+const __TASKS__ = Symbol('tasks');
 
 export interface SchemaOptions {
   nullAllow?: boolean,
@@ -31,7 +31,7 @@ class Schema {
   private _nullAllow: boolean;
   private _undefinedAllow: boolean;
   private readonly _isType: IsType;
-  private [_TEST_TASKS_]: ((val: any, options: Options) => (Promise<[any, Options]> | [any, Options]))[];
+  private [__TASKS__]: ((val: any, options: Options) => (Promise<[any, Options]> | [any, Options]))[];
 
   /**
    * 基础验证对象
@@ -41,15 +41,14 @@ class Schema {
    *   undefinedAllow:boolean
    * }}[options]
    */
-  constructor (isType?: (val: any) => boolean, options?: SchemaOptions);
-  constructor (isType = anyType, options = {} as SchemaOptions) {
+  constructor (isType: (val: any) => boolean = anyType, options: SchemaOptions = {}) {
     if (isObject(isType)) [isType, options] = [anyType, isType as SchemaOptions];
-    const { nullAllow = false, undefinedAllow = false, typeMismatch = "类型不匹配！" } = options;
+    const { nullAllow = false, undefinedAllow = false, typeMismatch = '类型不匹配！' } = options;
     this._nullAllow = nullAllow;
     this._undefinedAllow = undefinedAllow;
     this._isType = isType;
-    this[_TEST_TASKS_] = [];
-    this.test("isType", typeMismatch, (value: any) => (
+    this[__TASKS__] = [];
+    this.test('isType', typeMismatch, (value: any) => (
       (this._nullAllow && isNull(value)) ||
       (this._undefinedAllow && isUndefined(value)) ||
       this._isType(value)
@@ -65,7 +64,7 @@ class Schema {
    * @param {boolean}flg
    * @returns {Schema}
    */
-  nullAllow (flg = true) {
+  nullAllow (flg = true): Schema {
     this._nullAllow = flg;
     return this;
   }
@@ -75,7 +74,7 @@ class Schema {
    * @param {boolean}flg
    * @returns {Schema}
    */
-  undefinedAllow (flg = true) {
+  undefinedAllow (flg = true): Schema {
     this._undefinedAllow = flg;
     return this;
   }
@@ -86,9 +85,9 @@ class Schema {
    * @param {Boolean}[prev] 是否前置转换
    * @returns {Schema}
    */
-  transform (convert: TransformFn, prev = false) {
-    if (!isFunction(convert)) throw new Error("无法添加转换器！");
-    this[_TEST_TASKS_][prev ? "unshift" : "push"]((value, options) => {
+  transform (convert: TransformFn, prev = false): Schema {
+    if (!isFunction(convert)) throw new Error('无法添加转换器！');
+    this[__TASKS__][prev ? 'unshift' : 'push']((value, options) => {
       return Promise.resolve(convert(value)).then((value) => [value, options]);
     });
     return this;
@@ -103,14 +102,14 @@ class Schema {
    * @param {boolean}prev 前置检查点
    * @returns {Schema}
    */
-  test (name?: string | IsType, message?: string | TestFn | boolean, test?: TestFn | boolean, prev?: boolean) {
-    if (isFunction(name)) [name, message] = ["", name as string];
-    if (isFunction(message) && !test) [message, test] = ["", message as TestFn];
-    if (!isFunction(test)) throw new Error("无法添加检查点！");
+  test (name?: string | IsType, message?: string | TestFn | boolean, test?: TestFn | boolean, prev?: boolean): Schema {
+    if (isFunction(name)) [name, message] = ['', name as string];
+    if (isFunction(message) && !test) [message, test] = ['', message as TestFn];
+    if (!isFunction(test)) throw new Error('无法添加检查点！');
     const _name = name as string;
     const _message = message as string;
     const _test = test as TestFn;
-    this[_TEST_TASKS_][prev ? "unshift" : "push"]((value, options) => {
+    this[__TASKS__][prev ? 'unshift' : 'push']((value, options) => {
       return Promise.resolve(_test(value, options)).then((flg) => {
         if (!flg) throw new ValidationError(_message, options?.path, _name);
         return [value, options];
@@ -125,11 +124,12 @@ class Schema {
    * @param {object}[options]
    * @returns {Promise<>}
    */
-  validate (values: any, options?: Options) {
-    return this[_TEST_TASKS_].reduce(
+  validate<V> (values?: V, options?: Options) {
+    return this[__TASKS__].reduce(
       (p, fn) => p.then(([value, _options]) => fn(value, _options)),
-      Promise.resolve([values, Object.assign({ value: values }, options)])
-    ).then(([value]) => value)
+      Promise.resolve<[V | undefined, Options]>([values, Object.assign({ value: values }, options)])
+    )
+      .then(([value]) => value)
       .catch(error => Promise.reject(error instanceof Error ? error.message : error));
   }
 
@@ -144,17 +144,17 @@ class Schema {
    * @returns {Schema}
    */
   when (keys: string | string[], builder: {
-    is?: (values: any) => boolean | string | string[],
+    is?: IsType | string | string[],
     then?: Schema,
     otherwise?: Schema
-  }) {
-    this[_TEST_TASKS_].push((value, options) => {
+  }): Schema {
+    this[__TASKS__].push((value, options) => {
       const { parent = {} } = options;
       const { is, then, otherwise } = builder;
       const tests = Array.isArray(keys) ? keys.map(key => parent[key]) : parent[keys];
 
       // 计算is是否匹配成功
-      const isThen = (isFunction(is) && (is as Exclude<typeof builder["is"], undefined>)(tests)) ||
+      const isThen = (isFunction(is) && (is as IsType)(tests)) ||
         (Array.isArray(tests) && Array.isArray(is) && tests.every((test, i) => test === is[i])) ||
         (Array.isArray(tests) && !Array.isArray(is) && tests.every((test) => test === is)) ||
         tests === is;
@@ -165,7 +165,9 @@ class Schema {
       } else if (!isThen && otherwise instanceof Schema) {
         // 如果is验证失败，且otherwise是一个有效的Schema，则执行otherwise
         return Promise.resolve(otherwise.validate(value, options)).then(value => [value, options]);
-      } else return [value, options];
+      } else {
+        return [value, options];
+      }
     });
     return this;
   }
@@ -175,10 +177,10 @@ class Schema {
    * @param {Array<Schema>}types
    * @param {String|Function}[message]
    */
-  oneOfType (types: Schema[], message = "未知类型！") {
-    this[_TEST_TASKS_].push((value, options = {}) => {
+  oneOfType (types: Schema[], message = '未知类型！'): Schema {
+    this[__TASKS__].push((value, options = {}) => {
       const type = types.reduce((p: null | Schema, t) => t.isType(value) ? t : p, null);
-      if (type === null) throw new ValidationError(message, options.path || "", "oneOfType");
+      if (type === null) throw new ValidationError(message, options.path || '', 'oneOfType');
       return Promise.resolve(type.validate(value, options)).then(newValue => [newValue, options]);
     });
     return this;
@@ -190,10 +192,10 @@ class Schema {
    * @param {Array<*>}items
    * @returns {Schema}
    */
-  required (message = "不可为空！", items = [] as any[]) {
+  required (message = '不可为空！', items = [] as any[]) {
     if (!this._nullAllow) items.push(null);
     if (!this._undefinedAllow) items.push(undefined);
-    return this.notOneOf(items, message, "required");
+    return this.notOneOf(items, message, 'required');
   }
 
   /**
@@ -204,7 +206,7 @@ class Schema {
    * @param {String}[name] 判断名称
    * @returns {Schema}
    */
-  oneOf (items = [] as any[] | any, message = "未知值！", equals?: string | ((a: any, b: any) => boolean), name = "oneOf") {
+  oneOf (items = [] as any[] | any, message = '未知值！', equals?: string | ((a: any, b: any) => boolean), name = 'oneOf') {
     if (isString(equals)) [equals, name] = [undefined, equals as string];
     items = [].concat(items);
     const _setItems = new Set(items);
@@ -223,7 +225,7 @@ class Schema {
    * @param {String}[name]
    * @returns {Schema}
    */
-  notOneOf (items = [] as any[] | any, message = "未知值！", equals?: string | ((a: any, b: any) => boolean), name = "notOneOf") {
+  notOneOf (items = [] as any[] | any, message = '未知值！', equals?: string | ((a: any, b: any) => boolean), name = 'notOneOf') {
     if (isString(equals)) [equals, name] = [undefined, equals as string];
     items = [].concat(items);
     const _setItems = new Set(items);
@@ -262,7 +264,7 @@ class Schema {
    * @param {String|Function}[message]
    */
   toBe (value: any, message = `必须是${value}`) {
-    return this.oneOf(value, message, "toBe");
+    return this.oneOf(value, message, 'toBe');
   }
 
   /**
@@ -270,8 +272,8 @@ class Schema {
    * @param {Schema}schema
    * @returns {Schema}
    */
-  concat (schema: Schema) {
-    this[_TEST_TASKS_].push((value, options) => {
+  concat (schema: Schema): Schema {
+    this[__TASKS__].push((value, options) => {
       return Promise.resolve(schema.validate(value, options)).then((value) => [value, options]);
     });
     return this;
@@ -280,9 +282,9 @@ class Schema {
   /**
    * 复制一个自己
    */
-  clone () {
+  clone (): Schema {
     const clone = Object.create(this);
-    clone[_TEST_TASKS_] = Array.from(this[_TEST_TASKS_]);
+    clone[__TASKS__] = Array.from(this[__TASKS__]);
     return clone;
   }
 }

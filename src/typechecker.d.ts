@@ -1,4 +1,8 @@
-declare module "typechecker" {
+/*
+ * Author: bjiang
+ * Create Time: 2021/9/2 10:23
+ */
+declare module 'typechecker' {
   type test = (value: any) => boolean
   export const isBoolean: test;
   export const isNumber: test;

@@ -3,16 +3,16 @@
  * Create Time: 2019/10/24 10:08
  */
 
-import ArraySchema from "./ArraySchema";
-import BooleanSchema from "./BooleanSchema";
-import DateSchema from "./DateSchema";
-import MomentSchema from "./MomentSchema";
-import NumberSchema from "./NumberSchema";
-import ObjectSchema from "./ObjectSchema";
-import Schema from "./Schema";
-import StringSchema from "./StringSchema";
-import ValidationError from "./ValidationError";
-import YupCompatible from "./YupCompatible";
+import ArraySchema from './ArraySchema';
+import BooleanSchema from './BooleanSchema';
+import DateSchema from './DateSchema';
+import MomentSchema from './MomentSchema';
+import NumberSchema from './NumberSchema';
+import ObjectSchema from './ObjectSchema';
+import Schema from './Schema';
+import StringSchema from './StringSchema';
+import ValidationError from './ValidationError';
+import YupCompatible from './YupCompatible';
 
 export default Schema;
 

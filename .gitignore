@@ -4,3 +4,4 @@
 /dist
 /*.lock
 /yarn-error.log
+/lib
